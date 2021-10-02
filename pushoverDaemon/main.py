@@ -22,13 +22,12 @@ def do_main():
 	hostname = secrets['hostname']
 	url = 'http://{}/rr_status?type=3'.format(hostname)
 	threshold = secrets['threshold']
-	print(url)
 
 	secrets = None
 
 	c.send_message("Daemon initializing...", title="duetBridge")
 
-	last_percentage_sent = 0
+	last_threshold_sent = 0
 	while True:
 		try:
 			response = requests.get(url)
@@ -40,8 +39,8 @@ def do_main():
 
 			fraction_printed = int(response['fractionPrinted'])
 
-			if fraction_printed > 0 and fraction_printed > last_percentage_sent and fraction_printed % threshold == 0:
-				last_percentage_sent = fraction_printed
+			if fraction_printed > 0 and (fraction_printed / threshold) > last_threshold_sent:
+				last_threshold_sent = (fraction_printed / threshold)
 				c.send_message("Print is {}% complete".format(fraction_printed), title="duetBridge")
 				
 		except:
