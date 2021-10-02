@@ -38,9 +38,10 @@ def do_main():
 				pass
 
 			fraction_printed = int(response['fractionPrinted'])
+			val = int(fraction_printed / threshold)
 
-			if fraction_printed > 0 and (fraction_printed / threshold) > last_threshold_sent:
-				last_threshold_sent = (fraction_printed / threshold)
+			if val > last_threshold_sent:
+				last_threshold_sent = val
 				c.send_message("Print is {}% complete".format(fraction_printed), title="duetBridge")
 				
 		except:
