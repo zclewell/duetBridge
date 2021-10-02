@@ -25,7 +25,9 @@ def do_main():
 
 	secrets = None
 
-	c.send_message("Daemon initializing...", title="duetBridge")
+	send_message = lambda msg : c.send_message(msg, title="duetBridge")
+
+	send_message("Daemon intializing...")
 
 	last_threshold_sent = 0
 	while True:
@@ -35,14 +37,16 @@ def do_main():
 
 			status = response['status']
 			if status != 'P':
-				pass
+				if last_threshold_sent > 0:
+					send_message("Print completed")
+					last_threshold_sent = 0
 
 			fraction_printed = int(response['fractionPrinted'])
 			val = int(fraction_printed / threshold)
 
 			if val > last_threshold_sent:
 				last_threshold_sent = val
-				c.send_message("Print is {}% complete".format(fraction_printed), title="duetBridge")
+				send_message("Print is {}% complete".format(fraction_printed))
 				
 		except:
 			pass
